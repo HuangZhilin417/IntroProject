@@ -1,0 +1,107 @@
+﻿@model IEnumerable<IntroProject.Models.Table>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Stations</h1>
+
+// the create new button
+<p>
+    <a asp-action="Create" class="btn btn-success">Create New Station</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StationCount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    //List of the model, each with a add and revert button
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StationCount)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-success">Add</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Revert</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+//This is the DevExtreme Table
+<p>
+    @(Html.DevExtreme().DataGrid<Table>()
+                            .DataSource(d => d
+                            .Mvc()
+                            .Controller("Tables")
+                            .Key("Id")
+                            .LoadAction("GetOrders"))
+                    .ID("gridContainer")
+                    .ShowBorders(true)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.Title)
+                            ;
+
+                        columns.AddFor(m => m.StationCount);
+
+                        columns.AddFor(m => m.TimeStamp);
+                    }
+
+))
+</p>
+
+
+
+//This is the DevExtreme StepLine Data Graph
+@(Html.DevExtreme().Chart()
+                            .ID("line-chart")
+                            .Title("Station Counts VS TimeStamp")
+                            .CommonSeriesSettings(s => s
+                                .Type(SeriesType.StepLine)
+                                .ArgumentField("TimeStamp")
+                                .Stepline(sl => sl
+                                    .Point(p => p.Visible(false))
+                                )
+                            )
+                            .Series(s =>
+                            {
+                                foreach (var item in Model)
+                                {
+                                    s.Add().ValueField(item.Title).Name(item.Title);
+                                }
+
+                            })
+                            .Export(e => e.Enabled(true))
+                            .ArgumentAxis(a => a
+                                                .ArgumentType(ChartDataType.DateTime)
+                                                .ValueMarginsEnabled(true)
+                                                .Label(l => l
+                                                .Format(f => f
+                                                .Type(Format.ShortDateShortTime)
+                                                        )
+                                                       )
+
+
+                                          ).ValueAxis(a => a.Add().ValueType(ChartDataType.Numeric))
+
+                         .Legend(l => l
+                                       .VerticalAlignment(VerticalEdge.Bottom)
+                                       .HorizontalAlignment(HorizontalAlignment.Center)
+                        )
+                        .DataSource(Model))

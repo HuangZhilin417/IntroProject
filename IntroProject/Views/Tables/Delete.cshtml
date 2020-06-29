@@ -1,0 +1,43 @@
+﻿@model IntroProject.Models.Table
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Revert</h1>
+
+<h3>You can choose to revert to last added count or delete the whole station</h3>
+<div>
+    <h4>Last added</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TimeStamp)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TimeStamp)
+        </dd>
+    </dl>
+    <div class="btn-group" role="group" aria-label="B">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Revert" class="btn btn-success"/> |
+            
+
+        </form>
+
+        
+        <form asp-action="DeleteStation">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Delete Whole Station" class="btn btn-danger" /> |
+            <a asp-action="Index" class="btn btn-primary">Back to List</a>
+        </form>
+    </div>
+    
+</div>
